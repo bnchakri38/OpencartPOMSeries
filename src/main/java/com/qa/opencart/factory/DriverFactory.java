@@ -32,9 +32,9 @@ public class DriverFactory {
 	 * @return driver
 	 */
 	public WebDriver initDriver(Properties prop) {
-		
-		String browserName = prop.getProperty("browser"); 
-		
+
+		String browserName = prop.getProperty("browser");
+
 		System.out.println("Browser Name is: " + browserName);
 
 		switch (browserName.trim().toLowerCase()) {
@@ -60,9 +60,10 @@ public class DriverFactory {
 
 		return driver;
 	}
-	
+
 	/**
 	 * This method is used to initialize the properties from the config file
+	 * 
 	 * @return
 	 */
 	public Properties initProp() {

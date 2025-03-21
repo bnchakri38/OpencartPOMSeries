@@ -3,13 +3,17 @@ package com.qa.opencart.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import com.qa.opencart.constants.AppConstants;
+import com.qa.opencart.utils.ElementUtil;
+
 public class LoginPage {
 
 	private WebDriver driver; // without this we can not get driver.methods in this class
-
+	private ElementUtil eleUtil;
+	
 	// 1. private By locators: page objects
 	private By logo = By.cssSelector("img.img-responsive");
-	private By firstname = By.id("input-email");
+	private By username = By.id("input-email");
 	private By passowrd = By.id("input-password");
 	private By loginBtn = By.xpath("//input[@value='Login']");
 	private By forgotPasswordLink = By.linkText("Forgotten Password");
@@ -17,33 +21,42 @@ public class LoginPage {
 	// 2. Public Page Constructor..
 	public LoginPage(WebDriver driver) {
 		this.driver = driver;
+		eleUtil = new ElementUtil(driver);
 	}
 
 	// 3. Public Page Actions/Methods
 	public boolean isLogoExist() {
-		return driver.findElement(logo).isDisplayed();
+		return eleUtil.isElementDisplayed(logo);
 	}
+	
 	public String getLoginPageTitle() {
-		String title = driver.getTitle();
-		System.out.println("Page title is: " + title);
+		String title = eleUtil.waitForTitleContainsAndReturn(AppConstants.LOGIN_PAGE_TITLE, AppConstants.DEFAULT_SHORT_TIME_OUT);
+		System.out.println("Login Page Title is: " + title);
 		return title;
 	}
 
 	public String getLoginPageURL() {
-		String url = driver.getCurrentUrl();
-		System.out.println("Page title is: " + url);
+		String url = eleUtil.waitForURLContainsAndReturn(AppConstants.LOGIN_PAGE_FRACTION_URL, AppConstants.DEFAULT_SHORT_TIME_OUT);
+		System.out.println("Login Page URL is: " + url);
 		return url;
 	}
 
 	public boolean isForgotPasswordLinkExist() {
-		return driver.findElement(forgotPasswordLink).isDisplayed();
+		return eleUtil.isElementDisplayed(forgotPasswordLink);
 	}
 	
-	public String doLogin(String userName, String pwd) {
-		driver.findElement(firstname).sendKeys(userName);
-		driver.findElement(passowrd).sendKeys(pwd);
-		driver.findElement(loginBtn).click();
-		return getLoginPageTitle();
+	public AccountsPage doLogin(String userName, String pwd) {
+		
+		eleUtil.waitForElementVisible(username, AppConstants.DEFAULT_SHORT_TIME_OUT).sendKeys(userName);
+		eleUtil.doActionsSendKeys(passowrd, pwd);
+		eleUtil.doClick(loginBtn);
+		
+		// Implementing Page chaining model /Zig Zag pattern
+		return new AccountsPage(driver);
+
+//		String title = eleUtil.waitForTitleContainsAndReturn(AppConstants.ACCOUNTS_PAGE_TITLE, AppConstants.DEFAULT_SHORT_TIME_OUT);
+//		System.out.println("Accounts Page Title is: " + title);
+//		return title;
 	}
 		
 }
